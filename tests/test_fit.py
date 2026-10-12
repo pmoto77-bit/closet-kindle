@@ -1,0 +1,70 @@
+"""Every sample renders inside the screen, above the footer, with no overlapping text."""
+import json
+import os
+import sys
+import unittest
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, "generator"))
+
+import render   # noqa: E402
+import samples  # noqa: E402
+
+
+def load(name):
+    with open(os.path.join(ROOT, "generator", name), encoding="utf-8") as f:
+        return json.load(f)
+
+
+CFG, RULES = load("config.json"), load("clothing_rules.json")
+W, H = CFG["screen"]["width"], CFG["screen"]["height"]
+
+
+def overlaps(a, b):
+    return a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
+
+
+class TestFit(unittest.TestCase):
+    def check(self, name, label):
+        img, info = render.render(samples.sample(name, label), RULES, CFG)
+        tag = f"{name}/{label}"
+        self.assertEqual((img.size, img.mode), ((W, H), "L"), tag)
+        self.assertLessEqual(info["bottom"], H - render.FOOTER_H - 10, tag)
+        boxes = info["boxes"]
+        for (b, s) in boxes:
+            self.assertTrue(0 <= b[0] and b[2] <= W and 0 <= b[1] and b[3] <= H, f"{tag}: '{s}' off screen")
+        for i in range(len(boxes)):
+            for j in range(i + 1, len(boxes)):
+                self.assertFalse(overlaps(boxes[i][0], boxes[j][0]),
+                                 f"{tag}: '{boxes[i][1]}' overlaps '{boxes[j][1]}'")
+        return info
+
+    def test_all_samples_today_and_tomorrow(self):
+        for name in samples.SAMPLES:
+            for label in ("today", "tomorrow"):
+                with self.subTest(sample=name, label=label):
+                    self.check(name, label)
+
+    def test_worst_case_keeps_banner_and_aqi(self):
+        for label in ("today", "tomorrow"):
+            info = self.check("worst_case", label)
+            self.assertTrue(info["banner"].startswith("SEVERE THUNDERSTORM WARNING"))
+            self.assertIn("+2 more", info["banner"])
+            self.assertEqual(info["aqi_line"], "Air quality: Unhealthy (175)")
+
+    def test_normal_day_needs_no_fit_steps(self):
+        self.assertEqual(self.check("rainy_fall", "today")["fit"], [])
+        self.assertEqual(self.check("cold_windy", "today")["fit"], [])
+
+    def test_missing_sources_are_flagged(self):
+        info = self.check("sources_down", "today")
+        texts = [s for _, s in info["boxes"]]
+        self.assertIn("Weather alerts and air quality unavailable this update", texts)
+
+    def test_banner_end_time_wording(self):
+        day = samples.sample("winter_storm")
+        self.assertEqual(render.banner_text(day), "WINTER STORM WARNING until 7 PM Sun")
+
+
+if __name__ == "__main__":
+    unittest.main()

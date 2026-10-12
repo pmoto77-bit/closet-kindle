@@ -63,6 +63,16 @@ If the screen gets crowded, reasons are dropped in the order listed in `reason_p
 
 **Test download** checks whether this Kindle can fetch the images over HTTPS. It changes nothing on the Kindle. It shows the result on screen and writes details to `extensions/closetdash/test-result.txt`.
 
+**Start** runs the display:
+- It pauses the Kindle's reading interface, so nothing draws over the picture.
+- It downloads at 5:30 AM, 12 PM and 6 PM, and from 6 PM shows tomorrow's picture.
+- It turns the front light on from 6 to 9 AM.
+- If a download fails, it retries every 10 minutes. After about 90 minutes it writes a warning at the top of the screen.
+- Downloads are verified with the bundled `cacert.pem` (Mozilla's CA list, from curl.se). If that fails, it falls back to an unverified download.
+- Times and settings are in `bin/settings.sh`. The log is in `dash-log.txt`.
+
+**To exit:** tap the screen once, which shows a prompt. Then tap again within 10 seconds to go back to the normal Kindle. A single tap just refreshes the picture. If the Kindle ever seems stuck, hold the power button for about 40 seconds to restart it. After a restart it comes back as a normal Kindle, because Closet Dash doesn't start itself yet.
+
 ## Status
 - [x] Phase 1: image generator, rules, layout, self-tests (on the PC)
 - [ ] Phase 2: GitHub repo and Pages (`pmoto77-bit/closet-kindle`)

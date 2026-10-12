@@ -5,8 +5,22 @@
 			"priority": 0,
 			"items": [
 				{
-					"name": "Test download",
+					"name": "Start (to exit: tap screen twice)",
 					"priority": 1,
+					"action": "/bin/sh",
+					"params": "/mnt/us/extensions/closetdash/bin/start.sh",
+					"exitmenu": true
+				},
+				{
+					"name": "Stop Closet Dash",
+					"priority": 2,
+					"action": "/bin/sh",
+					"params": "/mnt/us/extensions/closetdash/bin/stop.sh",
+					"exitmenu": true
+				},
+				{
+					"name": "Test download",
+					"priority": 3,
 					"action": "/bin/sh",
 					"params": "/mnt/us/extensions/closetdash/bin/test-download.sh",
 					"exitmenu": true

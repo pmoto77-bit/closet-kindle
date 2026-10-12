@@ -64,6 +64,7 @@ log "frontlight: $(lipc-get-prop com.lab126.powerd flIntensity 2>&1)"
 log "preventScreenSaver: $(lipc-get-prop com.lab126.powerd preventScreenSaver 2>&1)"
 
 say ""
+try "curl + bundled certs" curl --cacert "$DIR/cacert.pem" -sS --max-time 30 -o
 try "curl"     curl -sS --max-time 30 -o
 try "curl -k"  curl -k -sS --max-time 30 -o
 try "wget"     wget -q -T 30 -O

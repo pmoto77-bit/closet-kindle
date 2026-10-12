@@ -38,13 +38,18 @@ state() {   # state NAME [DEFAULT]
 
 now_vars() {
 	if [ -n "$FAKE_NOW" ]; then
-		set -- $(date -d "$FAKE_NOW" '+%s %Y-%m-%d %H%M')
+		set -- $(date -d "$FAKE_NOW" '+%s %Y-%m-%d %H%M %S')
 	else
-		set -- $(date '+%s %Y-%m-%d %H%M')
+		set -- $(date '+%s %Y-%m-%d %H%M %S')
 	fi
 	EPOCH=$1
 	TODAY=$2
 	HHMM=$3
+	SECS=$4
+}
+
+minutes() {   # "0530" -> 330 (minutes since midnight)
+	echo $(( $(num "${1%??}") * 60 + $(num "${1#??}") ))
 }
 
 battery() {
@@ -123,10 +128,12 @@ set_clock() {   # fix the Kindle clock from the web server's Date header if it i
 
 # ------------------------------------------------------------------ schedule
 last_slot_epoch() {   # epoch of the latest scheduled time already reached today (0 = none yet)
+	now_min=$(minutes "$HHMM")
 	best=0
 	for t in $FETCH_TIMES; do
-		if [ "$(num "$HHMM")" -ge "$(num "$t")" ]; then
-			best=$(date -d "$TODAY ${t%??}:${t#??}" +%s)
+		t_min=$(minutes "$t")
+		if [ "$now_min" -ge "$t_min" ]; then
+			best=$(( EPOCH - (now_min - t_min) * 60 - $(num "$SECS") ))
 		fi
 	done
 	echo "$best"
@@ -184,7 +191,7 @@ fetch() {
 	[ -n "$pick" ] || { fail "no picture for the right day yet (server today=$st_today)"; return 1; }
 
 	get "$BASE/$pick.png" "$RUN/new.png" || { fail "could not download $pick.png"; return 1; }
-	head -c 4 "$RUN/new.png" | grep -q PNG || { fail "$pick.png is not a picture"; return 1; }
+	[ "$(dd if="$RUN/new.png" bs=1 skip=1 count=3 2>/dev/null)" = "PNG" ] || { fail "$pick.png is not a picture"; return 1; }
 	mv "$RUN/new.png" "$RUN/current.png"
 	echo "$cover" > "$RUN/shown_for"
 	echo "$EPOCH" > "$RUN/last_ok"
@@ -297,7 +304,7 @@ fi
 echo $$ > "$PIDFILE"
 rm -f "$RUN/exit" "$RUN/tap1" "$RUN/tap2" "$RUN/light" "$RUN/fails"
 log "=== Closet Dash v0.2 starting (battery $(battery)%)"
-log "ui jobs: $(initctl list 2>/dev/null | grep -E 'framework|lab126_gui|pillow' | tr '\n' ';')"
+log "ui jobs: $(initctl list 2>/dev/null | grep -e framework -e lab126_gui -e pillow | tr '\n' ';')"
 lipc-get-prop com.lab126.powerd flIntensity > "$RUN/light_before" 2>/dev/null
 
 sleep 3   # let KUAL close

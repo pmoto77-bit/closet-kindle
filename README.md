@@ -56,6 +56,13 @@ If the screen gets crowded, reasons are dropped in the order listed in `reason_p
 - **Kindle:** if it can't get a fresh image, it stamps "Not updated since…" on the screen instead of showing old weather as current.
 - **Battery:** the 2012 battery charges for about 3 hours each night on an outlet timer (2–5 AM). Every few months, check the back of the Kindle for bulging. If it's swollen, unplug it and retire the Kindle.
 
+## Putting the Kindle program on the Kindle
+1. On github.com, go to the repo and click **Code → Download ZIP**. Unzip it.
+2. Plug in the Kindle. Copy the folder `kindle/extensions/closetdash` into the Kindle's `extensions` folder, next to `MRInstaller`.
+3. Eject the Kindle. Then open **KUAL → Closet Dash**.
+
+**Test download** checks whether this Kindle can fetch the images over HTTPS. It changes nothing on the Kindle. It shows the result on screen and writes details to `extensions/closetdash/test-result.txt`.
+
 ## Status
 - [x] Phase 1: image generator, rules, layout, self-tests (on the PC)
 - [ ] Phase 2: GitHub repo and Pages (`pmoto77-bit/closet-kindle`)

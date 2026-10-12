@@ -1,0 +1,17 @@
+{
+	"items": [
+		{
+			"name": "Closet Dash",
+			"priority": 0,
+			"items": [
+				{
+					"name": "Test download",
+					"priority": 1,
+					"action": "/bin/sh",
+					"params": "/mnt/us/extensions/closetdash/bin/test-download.sh",
+					"exitmenu": true
+				}
+			]
+		}
+	]
+}

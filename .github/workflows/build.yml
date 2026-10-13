@@ -2,8 +2,9 @@ name: Build closet Kindle images
 
 on:
   schedule:
-    # ~4 AM, 11 AM, 5 PM Eastern Daylight (an hour earlier in winter). GitHub may start these late.
-    - cron: "0 8,15,21 * * *"
+    # Hourly from ~4 AM to ~10 PM Eastern (UTC 08-02). Off-peak minute: GitHub drops or delays
+    # top-of-the-hour runs, so one missed run must not leave the Kindle stale.
+    - cron: "17 8-23,0-2 * * *"
   workflow_dispatch:        # "Run workflow" button
   push:
     branches: [main]

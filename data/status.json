@@ -1,5 +1,5 @@
 {
-  "built": "2026-10-14T18:17",
+  "built": "2026-10-14T20:33",
   "place": "Grand Rapids",
   "utc_offset_seconds": -14400,
   "sources": {
@@ -10,19 +10,18 @@
   "today": {
     "date": "2026-10-14",
     "hi": 62,
-    "lo": 55,
+    "lo": 56,
     "alerts": [],
     "aqi_max": 35,
     "wear": [
-      "Light layer, long sleeves",
-      "Sweater after dark"
+      "Light layer, long sleeves"
     ],
     "fit": []
   },
   "tomorrow": {
     "date": "2026-10-15",
     "hi": 59,
-    "lo": 53,
+    "lo": 54,
     "alerts": [],
     "aqi_max": 27,
     "wear": [

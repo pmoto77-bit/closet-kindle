@@ -1,5 +1,5 @@
 {
-  "built": "2026-10-15T09:23",
+  "built": "2026-10-15T14:16",
   "place": "Grand Rapids",
   "utc_offset_seconds": -14400,
   "sources": {
@@ -15,14 +15,14 @@
     "aqi_max": 26,
     "wear": [
       "Sweater or fleece",
-      "Rain jacket or umbrella",
+      "Rain jacket for tonight",
       "Long pants, closed shoes"
     ],
     "fit": []
   },
   "tomorrow": {
     "date": "2026-10-16",
-    "hi": 60,
+    "hi": 61,
     "lo": 40,
     "alerts": [],
     "aqi_max": 30,
@@ -33,6 +33,8 @@
       "Warm jacket after dark",
       "Long pants, closed shoes"
     ],
-    "fit": []
+    "fit": [
+      "dropped wind reason"
+    ]
   }
 }

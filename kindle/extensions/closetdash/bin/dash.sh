@@ -149,6 +149,19 @@ image_ok() {   # is the picture on screen for the right day?
 	fi
 }
 
+new_build() {   # has the server published a newer build than the one on screen? (status.txt only, tiny)
+	echo "$EPOCH" > "$RUN/last_check"
+	wifi_up || return 1
+	if get "$BASE/status.txt" "$RUN/status.txt"; then
+		b="$(sed -n 's/^built=//p' "$RUN/status.txt")"
+		wifi_down
+		[ -n "$b" ] && [ "$b" != "$(state last_built)" ] && { log "new build on server: $b"; return 0; }
+		return 1
+	fi
+	wifi_down
+	return 1
+}
+
 due() {
 	fails=$(state fails 0)
 	if [ "$fails" -gt 0 ]; then
@@ -160,6 +173,9 @@ due() {
 	slot=$(last_slot_epoch)
 	[ "$slot" -gt 0 ] && [ "$(state last_ok 0)" -lt "$slot" ] && return 0
 	image_ok || return 0
+	if [ $((EPOCH - $(state last_check 0))) -ge $((CHECK_MIN * 60)) ]; then
+		new_build && return 0
+	fi
 	return 1
 }
 
@@ -195,6 +211,7 @@ fetch() {
 	mv "$RUN/new.png" "$RUN/current.png"
 	echo "$cover" > "$RUN/shown_for"
 	echo "$EPOCH" > "$RUN/last_ok"
+	echo "$st_built" > "$RUN/last_built"
 	date '+%a %H:%M' > "$RUN/last_ok_text"
 	echo 0 > "$RUN/fails"
 	log "OK $pick.png for $cover ($METHOD; built $st_built; battery $(battery)%)"

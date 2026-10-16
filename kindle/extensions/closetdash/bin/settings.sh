@@ -3,7 +3,8 @@
 BASE="https://pmoto77-bit.github.io/closet-kindle"
 
 FETCH_TIMES="0530 1200 1800"   # scheduled downloads
-TOMORROW_FROM="1800"           # from this time on, show tomorrow's picture
+CHECK_MIN="30"                 # between scheduled times, look this often for a newer build
+TOMORROW_FROM="1800"          # from this time on, show tomorrow's picture
 
 LIGHT_ON="0600"                # front light window
 LIGHT_OFF="0900"

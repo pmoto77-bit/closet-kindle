@@ -54,7 +54,7 @@ If the screen gets crowded, reasons are dropped in the order listed in `reason_p
 ## Health checks
 - **GitHub:** the Actions tab shows every run. A failed run (for example, the forecast couldn't be downloaded) sends an email, and the last good images stay up.
 - **Kindle:** if it can't get a fresh image, it stamps "Not updated since…" on the screen instead of showing old weather as current.
-- **Battery:** the 2012 battery charges for about 3 hours each night on an outlet timer (2–5 AM). Every few months, check the back of the Kindle for bulging. If it's swollen, unplug it and retire the Kindle.
+- **Battery:** the plan is for the 2012 battery to charge for about 3 hours each night on an outlet timer (2–5 AM). The timer isn't installed yet. In October 2026 the battery used about 1.7% per hour, so a 3-hour nightly charge is plenty. Every few months, check the back of the Kindle for bulging. If it's swollen, unplug it and retire the Kindle.
 
 ## Putting the Kindle program on the Kindle
 1. On github.com, go to the repo and click **Code → Download ZIP**. Unzip it.
@@ -66,17 +66,40 @@ If the screen gets crowded, reasons are dropped in the order listed in `reason_p
 **Start** runs the display:
 - It pauses the Kindle's reading interface, so nothing draws over the picture.
 - It downloads at 5:30 AM, 12 PM and 6 PM, and from 6 PM shows tomorrow's picture.
+- Between those times it checks every 30 minutes for a newer build (the cloud job runs hourly).
 - It turns the front light on from 6 to 9 AM.
 - If a download fails, it retries every 10 minutes. After about 90 minutes it writes a warning at the top of the screen.
 - Downloads are verified with the bundled `cacert.pem` (Mozilla's CA list, from curl.se). If that fails, it falls back to an unverified download.
 - Times and settings are in `bin/settings.sh`. The log is in `dash-log.txt`.
 
-**To exit:** tap the screen once, which shows a prompt. Then tap again within 10 seconds to go back to the normal Kindle. A single tap just refreshes the picture. If the Kindle ever seems stuck, hold the power button for about 40 seconds to restart it. After a restart it comes back as a normal Kindle, because Closet Dash doesn't start itself yet.
+**Touch setup (once).** The first time you press Start, three screens each show a black dot. Tap each dot. This teaches the program where the menu buttons are, because the touchscreen's raw numbers don't match screen pixels. The result is saved in `touch.conf`. **KUAL → Closet Dash → Redo touch setup** clears it.
+
+**The tap menu (kid-proof exit).** Tap the screen anywhere to open the menu:
+- **REFRESH NOW** gets the latest forecast.
+- **BACK TO WEATHER** closes the menu.
+- **EXIT TO KINDLE** is the small button in the bottom-right corner. It asks **"Exit to the Kindle?"**: tap the small **YES, EXIT** in the top-left corner to leave, or the big **NO** to stay.
+
+The menu closes by itself after 15 seconds, and the question after 10. Leaving takes two specific taps in opposite corners, so random taps keep the weather on screen. Settings: `MENU_TIMEOUT` and `CONFIRM_TIMEOUT` in `bin/settings.sh`.
+
+**Auto-start after a restart (optional).**
+- **KUAL → Closet Dash → Enable auto-start after restart** installs a small startup file (`/etc/upstart/closetdash.conf`) and writes `autostart-log.txt`.
+- After the Kindle restarts, it waits 30 seconds. It then shows **"Closet Dash starts in about a minute — tap anywhere to cancel."**
+  - A tap returns the normal Kindle for that boot.
+  - With no tap, the weather display starts.
+- **Disable auto-start** removes it.
+- **Kill switch:** a file named `STOP_CLOSETDASH` at the top level of the Kindle drive also stops auto-start.
+
+**If the Kindle ever seems stuck:** hold the power button for about 40 seconds to restart it.
+- If auto-start is off, it comes back as a normal Kindle.
+- If auto-start is on, tap during the countdown.
 
 ## Status
 - [x] Phase 1: image generator, rules, layout, self-tests (on the PC)
-- [ ] Phase 2: GitHub repo and Pages (`pmoto77-bit/closet-kindle`)
+- [x] Phase 2: GitHub repo and Pages (`pmoto77-bit/closet-kindle`); builds run hourly
 - [x] Phase 0: jailbreak the Kindle (done on a separate computer; downgrade to 5.3.3 → K5 JailBreak → DevCerts → MRPI + KUAL → back to 5.6.1.1)
-- [ ] Phase 3: Kindle program, starting with the HTTPS download test
+- [x] Phase 3: Kindle program v0.2. It ran from Oct 11 to Oct 15, 2026 with every download succeeding.
+- [ ] v0.3: tap menu with confirm, touch setup, optional auto-start. Being tested on the Kindle.
+
+Kindle screens (menu, confirm, touch setup, boot) are drawn by `generator/make_kindle_screens.py`. It also writes `img/buttons.txt` with the tap areas.
 
 Fonts: Selawik (SIL Open Font License; see `generator/fonts/LICENSE-Selawik.txt`).

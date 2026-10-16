@@ -16,5 +16,10 @@ RETRY_SLOW_MIN="30"            # then this often, and show a warning on screen
 
 LOW_BATTERY="20"               # show a battery warning below this %
 
+MENU_TIMEOUT="15"              # seconds the tap menu stays up
+CONFIRM_TIMEOUT="10"           # seconds the "Exit to the Kindle?" screen stays up
+BOOT_WAIT="30"                 # after a reboot: let the Kindle finish starting...
+BOOT_COUNTDOWN="60"            # ...then show a cancel-by-tap countdown this long
+
 WIFI_OFF_BETWEEN="0"           # 1 = turn Wi-Fi off between downloads (saves battery;
                                #     try only after the display has run reliably)

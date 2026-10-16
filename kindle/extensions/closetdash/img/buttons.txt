@@ -1,0 +1,9 @@
+# screen name x0 y0 x1 y1   (made by generator/make_kindle_screens.py)
+menu refresh 40 170 718 420
+menu back 40 460 718 710
+menu exit 418 830 718 980
+confirm yes 40 150 340 290
+confirm no 40 340 718 980
+calib 1 60 60
+calib 2 698 60
+calib 3 60 964

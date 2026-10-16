@@ -270,16 +270,38 @@ show() {   # full redraw: picture (or a message) plus any warning lines
 	WARN_SHOWN="$w"
 }
 
+chip_level() {   # light chip's real level; the file reads "FrontLight(Intensity) = 1"
+	v="$(cat "$FL_FILE" 2>/dev/null)"
+	echo "${v##*= }"
+}
+
+chip_off() {   # truly off: on the PW1, powerd level 0 still leaves the LEDs at 1 (a faint glow)
+	[ -n "$FL_FILE" ] || return
+	if [ -n "$CLOSETDASH_DRY" ] && [ -z "$CLOSETDASH_FL" ]; then
+		log "DRY: echo 0 > $FL_FILE"   # PC test without a fake chip file
+	else
+		echo 0 > "$FL_FILE"
+	fi
+}
+
 light() {
 	n=$(num "$HHMM")
 	want=0
 	if [ "$n" -ge "$(num "$LIGHT_ON")" ] && [ "$n" -lt "$(num "$LIGHT_OFF")" ]; then
 		want=$LIGHT_LEVEL
 	fi
-	[ "$want" = "$(state light)" ] && return
-	sys lipc-set-prop com.lab126.powerd flIntensity "$want"
-	echo "$want" > "$RUN/light"
-	log "front light $want"
+	if [ "$want" != "$(state light)" ]; then
+		sys lipc-set-prop com.lab126.powerd flIntensity "$want"
+		[ "$want" = "0" ] && chip_off
+		echo "$want" > "$RUN/light"
+		log "front light $want"
+	elif [ "$want" = "0" ] && [ -n "$FL_FILE" ] && [ "$(chip_level)" != "0" ]; then
+		chip_off   # something brought the LEDs back up: switch them off again
+		if [ $((EPOCH - $(state light_fix 0))) -ge 600 ]; then
+			echo "$EPOCH" > "$RUN/light_fix"
+			log "front light: LEDs had come back on - switched off again"
+		fi
+	fi
 }
 
 # ------------------------------------------------------------------ touch: taps with positions
@@ -452,9 +474,11 @@ if [ -f "$PIDFILE" ] && kill -0 "$(state dash.pid)" 2>/dev/null; then
 fi
 echo $$ > "$PIDFILE"
 rm -f "$RUN/light" "$RUN/fails" "$TAPS" "$RUN/dumped"
-log "=== Closet Dash v0.3 starting${CLOSETDASH_BOOT:+ after reboot} (battery $(battery)%)"
+log "=== Closet Dash v0.3.2 starting${CLOSETDASH_BOOT:+ after reboot} (battery $(battery)%)"
 log "ui jobs: $(initctl list 2>/dev/null | grep -e framework -e lab126_gui -e pillow | tr '\n' ';')"
 lipc-get-prop com.lab126.powerd flIntensity > "$RUN/light_before" 2>/dev/null
+FL_FILE="${CLOSETDASH_FL-$(find /sys/devices/system -name fl_intensity 2>/dev/null | head -n 1)}"
+log "light chip: ${FL_FILE:-not found (light can only go down to powerd 0)}"
 
 sleep 3   # let KUAL close
 ui_stop

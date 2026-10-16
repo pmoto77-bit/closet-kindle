@@ -40,6 +40,13 @@
 					"exitmenu": true
 				},
 				{
+					"name": "Light test (1 minute)",
+					"priority": 7,
+					"action": "/bin/sh",
+					"params": "/mnt/us/extensions/closetdash/bin/light-test.sh",
+					"exitmenu": true
+				},
+				{
 					"name": "Test download",
 					"priority": 6,
 					"action": "/bin/sh",

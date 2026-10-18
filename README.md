@@ -67,7 +67,7 @@ If the screen gets crowded, reasons are dropped in the order listed in `reason_p
 - It pauses the Kindle's reading interface, so nothing draws over the picture.
 - It downloads at 5:30 AM, 12 PM and 6 PM, and from 6 PM shows tomorrow's picture.
 - Between those times it checks every 30 minutes for a newer build (the cloud job runs hourly).
-- It turns the front light on from 6 to 9 AM.
+- It turns the front light on from 5:30 to 8 AM.
 - If a download fails, it retries every 10 minutes. After about 90 minutes it writes a warning at the top of the screen.
 - Downloads are verified with the bundled `cacert.pem` (Mozilla's CA list, from curl.se). If that fails, it falls back to an unverified download.
 - Times and settings are in `bin/settings.sh`. The log is in `dash-log.txt`.

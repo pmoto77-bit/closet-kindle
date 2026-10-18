@@ -61,6 +61,17 @@ class TestFit(unittest.TestCase):
         texts = [s for _, s in info["boxes"]]
         self.assertIn("Weather alerts and air quality unavailable this update", texts)
 
+    def test_curve_labels_high_and_low(self):
+        texts = [s for _, s in self.check("big_swing", "today")["boxes"]]
+        self.assertIn("66°", texts)
+        self.assertIn("34°", texts)
+        flat = samples.sample("calm_fifties")
+        for x in flat["hours"]:
+            x["temp"] = 50
+        c = render.Canvas(W, H)
+        render.draw_curve(c, 0, flat, CFG, 90)
+        self.assertEqual([s for _, s in c.boxes].count("50°"), 1)
+
     def test_banner_end_time_wording(self):
         day = samples.sample("winter_storm")
         self.assertEqual(render.banner_text(day), "WINTER STORM WARNING until 7 PM Sun")

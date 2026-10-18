@@ -194,17 +194,21 @@ def draw_curve(c, y, day, cfg, ch):
     temps = [x["temp"] for x in day["hours"] if h0 <= x["h"] <= h1]
     x0, x1 = M + 10, c.w - M - 10
     top, bot = y + 34, y + 34 + ch
+    fl = font(24, "bold")
+    floor = bot - 14 - (fl.getbbox("0°", anchor="ma")[3])  # room for the low label under its dot
     lo, hi = min(temps) - 2, max(temps) + 2
     n = len(temps)
-    pts = [(x0 + i * (x1 - x0) / (n - 1), bot - (t - lo) / (hi - lo) * (bot - top))
+    pts = [(x0 + i * (x1 - x0) / (n - 1), floor - (t - lo) / (hi - lo) * (floor - top))
            for i, t in enumerate(temps)]
     c.d.polygon(pts + [(x1, bot), (x0, bot)], fill=230)
     c.d.line(pts, fill=BLACK, width=4, joint="curve")
     pk = max(range(n), key=lambda i: temps[i])
-    px, py = pts[pk]
-    c.d.ellipse([px - 7, py - 7, px + 7, py + 7], fill=BLACK)
-    c.text((min(max(px, M + 24), c.w - M - 24), py - 12), f"{temps[pk]}°",
-           font(24, "bold"), anchor="mb")
+    lk = min(range(n), key=lambda i: temps[i])
+    marks = [(pk, -12, "mb")] + ([(lk, 12, "ma")] if temps[lk] < temps[pk] else [])  # flat day: high only
+    for k, dy, anchor in marks:
+        px, py = pts[k]
+        c.d.ellipse([px - 7, py - 7, px + 7, py + 7], fill=BLACK)
+        c.text((min(max(px, M + 24), c.w - M - 24), py + dy), f"{temps[k]}°", fl, anchor=anchor)
     f = font(20)
     for i in range(0, n, 4):
         h = h0 + i

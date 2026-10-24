@@ -59,3 +59,4 @@ built,date,hi,lo,alerts,aqi_max,forecast,aqi,nws
 2026-10-23T14:18,2026-10-23,66,44,,72,ok,ok,ok
 2026-10-23T18:07,2026-10-23,68,44,,72,ok,ok,ok
 2026-10-23T20:39,2026-10-23,68,44,,72,ok,ok,ok
+2026-10-24T01:49,2026-10-24,67,43,Dense Fog Advisory,66,ok,ok,ok

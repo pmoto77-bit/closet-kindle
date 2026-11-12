@@ -1,5 +1,5 @@
 {
-  "built": "2026-11-11T17:40",
+  "built": "2026-11-11T22:47",
   "place": "Grand Rapids",
   "utc_offset_seconds": -18000,
   "sources": {
@@ -22,13 +22,13 @@
   },
   "tomorrow": {
     "date": "2026-11-12",
-    "hi": 45,
-    "lo": 32,
+    "hi": 44,
+    "lo": 34,
     "alerts": [],
     "aqi_max": 50,
     "wear": [
       "Warm jacket",
-      "Hooded rain jacket, no umbrella",
+      "Umbrella, just in case",
       "Winter coat tonight",
       "Long pants, closed shoes"
     ],
